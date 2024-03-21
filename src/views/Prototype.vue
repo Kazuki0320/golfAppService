@@ -1,40 +1,59 @@
 <template>
-<label for="name">Name (4 to 8 characters):</label>
-
-<input type="text" id="name" name="name" required minlength="4" maxlength="8" size="10"/>
+	<v-form v-model="valid">
+		<v-container>
+			<v-row>
+			<v-col
+				cols="12"
+				md="4"
+			>
+				<v-text-field
+				v-model="message"
+				:counter="20"
+				:rules="nameRules"
+				label="名前の追加"
+				hide-details
+				required
+				></v-text-field>
+			</v-col>
+			</v-row>
+		</v-container>
+	</v-form>
+	<v-btn
+		color="primary"
+		class="ma-2"
+		type="submit"
+		:disabled="invalid"
+		@click="submit"
+	>
+		追加
+	</v-btn>
 
 	<div class="d-flex align-center flex-column">
-		<v-card
-		subtitle="This is a subtitle"
-		text="This is content"
-		title="This is a title"
-		width="400"
-		></v-card>
-		
 		<v-card width="400">
 		<template v-slot:title>
-			This is a title
+			{{ message }}
 		</template>
 	
 		<template v-slot:subtitle>
-			This is a subtitle
+			{{ message }}
 		</template>
 	
-		<template v-slot:text>
-			This is content
-		</template>
 		</v-card>
 		
 		<v-card width="400">
-		<v-card-item>
-			<v-card-title>This is a title</v-card-title>
-	
-			<v-card-subtitle>This is a subtitle</v-card-subtitle>
-		</v-card-item>
-	
-		<v-card-text>
-			This is content
-		</v-card-text>
+			<v-card-item>
+				<v-card-title>{{ message }}</v-card-title>	
+			</v-card-item>
 		</v-card>
 	</div>
-	</template>
+</template>
+
+<script lang="ts">
+import { defineComponent } from '@vue/composition-api'
+
+export default defineComponent({
+	data: () => ({
+		message: ""
+	})
+})
+</script>
