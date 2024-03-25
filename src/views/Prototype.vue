@@ -40,22 +40,22 @@
 			width="400"
 		>
 			<div
+				v-for="(card, index) in cardList"
+				:key="`${card}_${index}`"
 				class="drop-area"
-				@drop="dropList($event)"
-				@dragover.prevent
-				@dragenter.prevent
+				@drop="dropList($event, index)"
 			>
 			<v-row>
-				<v-col>
+				<v-col
+					cols="4"
+				>
 					<v-card 
-					v-for="(card, index) in cardList"
-							:key="`${card}_${index}`"
-							cols="4"
-							draggable="true"
-							@dragstart="dragList($event, card.id)"
+						draggable="true"
+						@dragstart="saveFromIndex($event, index)"
+						@dragover.prevent
+						@dragenter.prevent
 					>
 					<v-card-text>
-						{{ card.id }}
 						{{ card.name }}
 					</v-card-text>
 					</v-card>
@@ -67,7 +67,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from '@vue/composition-api'
+import { defineComponent } from '@vue/composition-api';
+import { moveIndex } from '@/utils/utils';
 
 export default defineComponent({
 	data: () => ({
@@ -83,22 +84,21 @@ export default defineComponent({
 			});
 			this.newName = '';
 		},
-		dragList(event, dragId) {
-			event.dataTransfer.effectAllowed = 'move'
-			event.dataTransfer.dropEffect = 'move'
-			event.dataTransfer.setData('CardListId', dragId)
-		},
-		dropList(event) {
-			const dragId = parseInt(event.dataTransfer.getData('CardListId'))
-			// const dragList = this.cardList.find(card => card.id === dragId)
-			const dragListIndex = this.cardList.findIndex(card => card.id === dragId);
-			if (dragListIndex !== -1) {
-				// ドロップされた要素のインデックスを取得する
-				const dropIndex = dragListIndex - 1;
-				// 要素をドロップされた位置に挿入する
-				this.cardList.splice(dropIndex, 0, this.cardList.splice(dragListIndex, 1)[0]);
+		saveFromIndex(event: DragEvent, dragIndex: number) {
+			if(event.dataTransfer) {
+				event.dataTransfer.setData('CardListId', dragIndex.toString());
 			}
-		}
+		},
+		dropList(event: DragEvent, index: number) {
+			if(event.dataTransfer) {
+				const dragId = parseInt(event.dataTransfer.getData('CardListId'));
+				console.log(event.dataTransfer.getData('CardListId'));
+
+				const arr = [...this.cardList];
+				const newArr = moveIndex(arr, dragId, index);
+				this.cardList = newArr;
+			}
+		},
 	}
 })
 </script>
